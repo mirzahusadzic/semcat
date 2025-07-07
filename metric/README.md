@@ -1,5 +1,5 @@
-# RoSE: RObust Metric for Semantic Evaluation
-This is a repository for the paper [RoSE Metric](TBA).
+# SEMCAT: Semantic Evaluation Metric Conforming to AMR Theory
+This is a repository for the paper [SEMCAT Metric](TBA).
 
 ## Howto: execute this metric
 
@@ -56,18 +56,18 @@ optional arguments:
 ## What is `stdin.py`?
 
 The main script file for comparing two list of AMR graphs from the standard input.
-This will use `RoSE5-99` (N=5, Tau=0.99).
+This will use `RoSE5-99` (N=5, Tau=0.99). (SEMCAT's WL kernel-its past name)
 To use this, just type `python stdin.py` and follow the instruction.
 
 
 ## File structure
 
-- `/main.py` Python script for executing RoSE for stored files
-- `/stdin.py` Python script for running RoSE on the fly, using standard input.
+- `/main.py` Python script for executing WL hashing for stored files
+- `/stdin.py` Python script for running WL hashing on the fly, using standard input.
 - `/requirements.txt` Text file that specifies required libraries for Python.
-- `/rose` Python package for RoSE
-    - `/rose/scorer.py` Definition of RoSE metric
-    - `/rose/__init__.py` Definition of calling RoSE metric (for main.py and stdin.py)
+- `/rose` Python package for WL hashing part
+    - `/rose/scorer.py` Definition of WL hashing
+    - `/rose/__init__.py` Definition of calling WL hashing (for main.py and stdin.py)
 
 ## Citation
 TBA
