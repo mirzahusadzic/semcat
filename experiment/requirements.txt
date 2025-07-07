@@ -1,0 +1,9 @@
+networkx
+tqdm
+wget
+numpy
+Penman
+scipy==1.12.0
+pandas
+statsmodels==0.13.5
+smatch

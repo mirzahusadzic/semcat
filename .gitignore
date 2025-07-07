@@ -1,0 +1,32 @@
+.idea
+
+# test result files
+msrp_mcsplit2.txt
+msrp_total_75.txt
+test.txt
+
+# metric
+/metric/.tmp/
+/metric/dist/
+/metric/results/
+/metric/rose/__pycache__/
+/metric/__pycache__/
+
+# experiment
+
+/experiment/.ipynb_checkpoints/
+/experiment/.tmp/
+/experiment/__pycache__/
+/experiment/amr-metric-suite/
+/experiment/amr-robustness_old/
+/experiment/esmatchpp/smatchpp/__pycache__/
+/experiment/resources/
+/experiment/result/
+/experiment/utils/__pycache__/
+
+# resutls
+/AMR_para_results/
+/DP_para_results/
+
+# venv
+/venv/

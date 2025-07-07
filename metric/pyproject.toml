@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "semantic-rose"
+version = "1.0.0"
+description = "RoSE: RObust Metric for Semantic Evaluation"
+authors = ["TBA <TBA@TBA.TBA>", "TBA <TBA@TBA.TBA>", "TBA <TBA@TBA.TBA>"]
+readme = "README.md"
+packages = [{include = "rose"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+networkx = "^2.8.6"
+numpy = "^1.23.3"
+penman = "^1.2.2"
+scipy = "^1.9.1"
+
+[tool.poetry.scripts]
+rose = "rose.main:file_main"
+rose-stdin = "rose.main:stdin_main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
