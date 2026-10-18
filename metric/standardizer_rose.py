@@ -1,3 +1,5 @@
+# Modified 2026-10-19 by Mirza Husadzic: shared AMR role normalization.
+# Original RoSE code: MIT (LICENSE.txt); changes: ../LICENSES/fork-MIT.txt.
 from typing import Tuple, List, Optional
 from collections import Counter, defaultdict
 
@@ -8,6 +10,7 @@ from penman.codec import format
 from penman.layout import configure, rearrange, interpret, reconfigure
 from penman.models.amr import model, reifications
 from penman.transform import dereify_edges, reify_attributes
+from amr_normalization import canonical_triple
 
 REIFIED_CONCEPTS = {c for _, c, _, _ in reifications}
 
@@ -74,14 +77,7 @@ def top_tuples(tuples, graph):
 
 
 def canonicalize_graph(g: penman.Graph):
-    triples = sorted(set(g.triples))
-    new_triples = []
-    for triple in triples:
-        new_triples.append(model.deinvert(triple))
-    triples = new_triples
-    new_triples = []
-    for triple in triples:
-        new_triples.append(model.canonicalize(triple))
+    new_triples = sorted({canonical_triple(t) for t in g.triples})
     out_counter = Counter([s for s, r, _ in new_triples if r != '/'])
     new_graph = penman.Graph(new_triples, metadata=g.metadata)
     top = top_tuples(out_counter.items(), new_graph)[0]

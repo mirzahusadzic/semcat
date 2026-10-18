@@ -1,3 +1,5 @@
+# Modified 2026-10-19 by Mirza Husadzic: AMR role normalization and variable origins.
+# SPDX-License-Identifier: GPL-3.0-only; see ../LICENSE.
 from typing import Tuple, List
 from collections import Counter, defaultdict
 
@@ -6,6 +8,7 @@ from penman.codec import format
 from penman.layout import configure, rearrange, interpret, reconfigure
 from penman.models.amr import model, reifications
 from penman.transform import dereify_edges
+from amr_normalization import canonical_triple
 
 REIFIED_CONCEPTS = {c for _, c, _, _ in reifications}
 
@@ -72,14 +75,7 @@ def top_tuples(tuples, graph):
 
 
 def canonicalize_graph(g: penman.Graph):
-    triples = sorted(set(g.triples))
-    new_triples = []
-    for triple in triples:
-        new_triples.append(model.deinvert(triple))
-    triples = new_triples
-    new_triples = []
-    for triple in triples:
-        new_triples.append(model.canonicalize(triple))
+    new_triples = sorted({canonical_triple(t) for t in g.triples})
     out_counter = Counter([s for s, r, _ in new_triples if r != '/'])
     new_graph = penman.Graph(new_triples, metadata=g.metadata)
     top = top_tuples(out_counter.items(), new_graph)[0]
@@ -87,18 +83,25 @@ def canonicalize_graph(g: penman.Graph):
                           model=model), model=model)
 
 
-def to_standard_amr(graph: str) -> str:
+def to_standard_amr(graph: str, with_origins=False):
     graph = penman.loads(graph.strip(), model=model)[0]
+    origins = {v: v for v in graph.variables()}
+    def rename(tree):
+        before = [v for v, _ in tree.nodes()]
+        tree.reset_variables('{prefix}{i}')
+        change = dict(zip(before, [v for v, _ in tree.nodes()]))
+        return {change[v]: source for v, source in origins.items() if v in change}
     tree = reconfigure(graph, top=graph.top, model=model)
     rearrange(tree, key=model.canonical_order)
-    tree.reset_variables('{prefix}{i}')
+    origins = rename(tree)
     graph = canonicalize_graph(dereify_edges(_remove_duplicates(penman.interpret(tree, model=model)), model))
 
     # Convert it into a tree and rearrange
     tree = reconfigure(graph, top=graph.top, model=model)
     rearrange(tree, key=model.canonical_order)
-    tree.reset_variables('{prefix}{i}')
-    return format(tree).strip()
+    origins = rename(tree)
+    result = format(tree).strip()
+    return (result, origins) if with_origins else result
 
 # r1 = '(a / and :op1 (f / find-01:ARG1 (p / photo:ARG0-of (h2 / have-03:ARG1 (t / thing:ARG2-of (n2 / name-01:ARG1 p2):ARG1-of (w / write-01:location b))):part (b / back):topic (p2 / person:ARG0-of (h / have-rel-role-91:ARG1 (p3 / person:name (n / name:op1 "Frizell"):wiki -):ARG2 (g / granddaughter)))):location (r / relative-position:op1 (h3 / home:poss p3):quant (s / several:op1 (d / distance-quantity:quant 1:unit (m / mile))))):op2 (g2 / give-01:ARG1 p:ARG2 (s2 / station:ARG1-of (l / local-02):mod (t2 / television))))'
 # r2 = '(a / and :op1 (f / find-01:ARG1 (p / photo:poss (t / thing:ARG2-of (n2 / name-01:ARG1 p2):ARG1-of (w / write-01:location b)):part (b / back):topic (p2 / person:ARG0-of (h / have-rel-role-91:ARG1 (p3 / person:name (n / name:op1 "Frizell"):wiki -):ARG2 (g / granddaughter)))):location (r / relative-position:op1 (h3 / home:poss p3):quant (s / several:op1 (d / distance-quantity:quant 1:unit (m / mile))))):op2 (g2 / give-01:ARG1 p:ARG2 (s2 / station:ARG1-of (l / local-02):mod (t2 / television))))'

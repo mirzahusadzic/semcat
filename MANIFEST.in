@@ -1,0 +1,6 @@
+include README.md CHANGELOG.md LICENSING.md
+include LICENSES/fork-MIT.txt
+include metric/LICENSE.txt experiment/esmatchpp/LICENSE
+include metric/_build_runtime.py
+recursive-include tests *.py
+recursive-include examples *.py

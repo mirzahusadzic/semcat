@@ -1,11 +1,13 @@
+# Modified 2026-10-19 by Mirza Husadzic: preserve Unicode labels with JSON encoding.
+# Original RoSE code: MIT (../LICENSE.txt); changes: ../../LICENSES/fork-MIT.txt.
 import logging
+import json
 import re
 import sys
 from collections import defaultdict, namedtuple, Counter
 from typing import List, Optional, Tuple
 from itertools import permutations
 
-import anyascii
 import standardizer_rose
 import networkx
 import penman
@@ -254,7 +256,7 @@ class RoSE:
         for identifier in sorted(graph.instances(), key=lambda t: t.target or ''):
             if identifier.source is None:
                 continue
-            new_graph.add_node(identifier.source, name=anyascii.anyascii(identifier.target) or '', is_variable=True)
+            new_graph.add_node(identifier.source, name=json.dumps(identifier.target or '', ensure_ascii=True), is_variable=True)
 
         edges = {}
         attr_counts = Counter()
@@ -265,7 +267,7 @@ class RoSE:
             target = ALIGNMENT_REGEX.sub('', edge.target) if type(edge.target) is str else str(edge.target)
             attr_counts[target] += 1
             attr_value = f'attr:{target}.{attr_counts[target]}'
-            new_graph.add_node(attr_value, name=anyascii.anyascii(target), is_variable=False)
+            new_graph.add_node(attr_value, name=json.dumps(target, ensure_ascii=True), is_variable=False)
 
             role = ALIGNMENT_REGEX.sub('', edge.role)
 

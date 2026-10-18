@@ -1,3 +1,5 @@
+# Modified 2026-10-19 by Mirza Husadzic: expose normalized graphs and original IDs.
+# SPDX-License-Identifier: GPL-3.0-only; see ../LICENSE.
 import time
 import logging
 from smatchpp import util
@@ -62,8 +64,10 @@ class Smatchpp():
 
         
     def process_pair(self, string_g1, string_g2):
-        string_g1 = to_standard_amr(string_g1)
-        string_g2 = to_standard_amr(string_g2)
+        string_g1, origins1 = to_standard_amr(string_g1, with_origins=True)
+        string_g2, origins2 = to_standard_amr(string_g2, with_origins=True)
+        self.last_normalization = [dict(penman=string_g1, origins=origins1),
+                                   dict(penman=string_g2, origins=origins2)]
         g1 = self.graph_reader.string2graph(string_g1)  # MODIFIED in SMATCH#
         g2 = self.graph_reader.string2graph(string_g2)  # MODIFIED in SMATCH#
         logger.debug("graph pair loaded,\n\nG1: {}\n\nG2: {}".format(g1, g2))

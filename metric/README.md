@@ -1,4 +1,7 @@
 # SEMCAT: Semantic Evaluation Metric Conforming to AMR Theory
+> Historical upstream instructions. For this fork, install from the repository
+> root and use the [runtime guide](../README.md).
+
 This is a repository for the paper [SEMCAT Metric](TBA).
 
 ## Howto: execute this metric

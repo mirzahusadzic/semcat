@@ -1,0 +1,45 @@
+name: Build and Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ['3.11', '3.12', '3.13', '3.14']
+        include:
+          - os: macos-latest
+            python: '3.13'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    env:
+      SOLVER_NAME: HIGHS
+      PYTHONHASHSEED: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Build source distribution and wheel
+        run: |
+          python -m pip install build twine
+          python -m build
+          python -m twine check --strict dist/*
+      - name: Install wheel into a clean environment
+        run: |
+          python -m venv "$RUNNER_TEMP/semcat-test-env"
+          "$RUNNER_TEMP/semcat-test-env/bin/python" -m pip install dist/*.whl
+          "$RUNNER_TEMP/semcat-test-env/bin/python" -m pip check
+      - name: Test installed package outside the checkout
+        working-directory: ${{ runner.temp }}
+        run: |
+          "$RUNNER_TEMP/semcat-test-env/bin/python" -m unittest discover -s "$GITHUB_WORKSPACE/tests" -v
+          "$RUNNER_TEMP/semcat-test-env/bin/python" "$GITHUB_WORKSPACE/examples/compare.py"

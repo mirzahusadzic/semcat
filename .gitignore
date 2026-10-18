@@ -30,3 +30,11 @@ test.txt
 
 # venv
 /venv/
+
+# Maintained runtime builds
+/.venv/
+/build/
+/dist/
+*.egg-info/
+__pycache__/
+*.py[cod]

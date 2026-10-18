@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "semcat-runtime"
+version = "0.1.0"
+description = "Maintained SEMCAT runtime from snucclab/ssharp, with AMR normalization fixes"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "GPL-3.0-only AND MIT"
+license-files = [
+    "LICENSING.md",
+    "experiment/esmatchpp/LICENSE",
+    "metric/LICENSE.txt",
+    "LICENSES/fork-MIT.txt",
+]
+dependencies = [
+    "penman==1.3.1",
+    "networkx>=3.5,<4",
+    "numpy>=1.26,<3",
+    "scipy>=1.16,<2",
+    "pandas>=2.2,<3",
+    "mip[highs]==2.0.0",
+]
+
+[project.urls]
+Upstream = "https://github.com/snucclab/ssharp"
+
+[tool.setuptools]
+packages = ["rose", "smatchpp"]
+py-modules = ["calc_SEMCAT", "standardizer_rose", "amr_normalization"]
+include-package-data = false
+
+[tool.setuptools.package-dir]
+"" = "metric"
+rose = "metric/rose"
+smatchpp = "experiment/esmatchpp/smatchpp"
+
+[tool.setuptools.package-data]
+smatchpp = ["resource/*"]
+
+[tool.setuptools.cmdclass]
+build_py = "_build_runtime.RuntimeBuild"

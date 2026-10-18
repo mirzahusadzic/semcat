@@ -1,8 +1,11 @@
+# Modified 2026-10-19 by Mirza Husadzic: preserve lexical roles ending in -of.
+# SPDX-License-Identifier: GPL-3.0-only; see ../LICENSE.
 from copy import deepcopy
 from collections import defaultdict
 import logging
 from smatchpp import util
 from smatchpp import interfaces
+from amr_normalization import canonical_triple
 
 logger = logging.getLogger("__main__")
 
@@ -187,13 +190,8 @@ class AMRGraphStandardizer(interfaces.GraphStandardizer):
         return None
 
     def _deinvert_e(self, triples):
-        
-        for i in range(len(triples)):
-            s, r, t = triples[i]
-            r = r.split("-of")
-            if len(r) > 1:
-                r = r[0]
-                triples[i] = (t, r, s)
+        for i, triple in enumerate(triples):
+            triples[i] = canonical_triple(triple)
         
         return None
 
